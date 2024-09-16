@@ -1,101 +1,292 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Home, User, Building2, Pencil, X } from "lucide-react";
 
-export default function Home() {
+export default function CarRentalSystem() {
+  const [view, setView] = useState("customer");
+  const [rentals, setRentals] = useState([
+    {
+      id: 1,
+      customer: "John Doe",
+      car: "Sedan",
+      status: "Pending",
+      dates: "2023-06-01",
+    },
+    {
+      id: 2,
+      customer: "Jane Smith",
+      car: "SUV",
+      status: "Approved",
+      dates: "2023-06-15",
+    },
+  ]);
+
+  const [editingRental, setEditingRental] = useState(null);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // Handle form submission logic here
+  };
+
+  const handleCancel = (id: number) => {
+    setRentals(rentals.filter((rental) => rental.id !== id));
+  };
+
+  const handleModify = (rental: any) => {
+    setEditingRental(rental);
+  };
+
+  const handleUpdate = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const updatedRental = {
+      ...(editingRental as any),
+    };
+    setRentals(
+      rentals.map((rental) =>
+        rental.id === updatedRental.id ? updatedRental : rental
+      )
+    );
+    setEditingRental(null);
+  };
+
+  const handleEvaluate = (id: number, status: string) => {
+    setRentals(
+      rentals.map((rental) =>
+        rental.id === id ? { ...rental, status } : rental
+      )
+    );
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex flex-col min-h-screen">
+      <header className="bg-primary text-primary-foreground shadow-md">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <Home className="h-6 w-6 mr-2" />
+              <span className="font-bold text-lg">Car Rental System</span>
+            </div>
+            <nav>
+              <ul className="flex space-x-4">
+                <li>
+                  <Button
+                    variant={view === "customer" ? "secondary" : "ghost"}
+                    onClick={() => setView("customer")}
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Customer
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    variant={view === "agent" ? "secondary" : "ghost"}
+                    onClick={() => setView("agent")}
+                  >
+                    <Building2 className="h-4 w-4 mr-2" />
+                    Agent
+                  </Button>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
+      </header>
+
+      <main className="flex-grow container mx-auto p-4">
+        {view === "customer" ? (
+          <>
+            <Card className="mb-4">
+              <CardHeader>
+                <CardTitle>
+                  {editingRental
+                    ? "Modify Rental Request"
+                    : "New Rental Request"}
+                </CardTitle>
+                <CardDescription>
+                  {editingRental
+                    ? "Update your rental request here."
+                    : "Enter your rental request here."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={editingRental ? handleUpdate : handleSubmit}>
+                  <div className="grid w-full items-center gap-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <Label htmlFor="name">Name</Label>
+                      <Input
+                        id="name"
+                        placeholder="Enter your name"
+                        defaultValue={editingRental || ("" as any)}
+                        readOnly={!!editingRental}
+                      />
+                    </div>
+                    <div className="flex flex-col space-y-1.5">
+                      <Label htmlFor="car">Car Type</Label>
+                      <Select
+                        name="car"
+                        defaultValue={editingRental || ("" as any)}
+                      >
+                        <SelectTrigger id="car">
+                          <SelectValue placeholder="Select car type" />
+                        </SelectTrigger>
+                        <SelectContent position="popper">
+                          <SelectItem value="Sedan">Sedan</SelectItem>
+                          <SelectItem value="SUV">SUV</SelectItem>
+                          <SelectItem value="Sports Car">Sports Car</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex flex-col space-y-1.5">
+                      <Label htmlFor="dates">Rental Dates</Label>
+                      <Input
+                        id="dates"
+                        name="dates"
+                        type="date"
+                        defaultValue={editingRental || ("" as any)}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-between mt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setEditingRental(null)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button type="submit">
+                      {editingRental ? "Update Request" : "Submit Request"}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Rental Requests</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>ID</TableHead>
+                      <TableHead>Car Type</TableHead>
+                      <TableHead>Dates</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {rentals.map((rental) => (
+                      <TableRow key={rental.id}>
+                        <TableCell>{rental.id}</TableCell>
+                        <TableCell>{rental.car}</TableCell>
+                        <TableCell>{rental.dates}</TableCell>
+                        <TableCell>{rental.status}</TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleModify(rental)}
+                            >
+                              <Pencil className="h-4 w-4 mr-1" />
+                              Modify
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleCancel(rental.id)}
+                            >
+                              <X className="h-4 w-4 mr-1" />
+                              Cancel
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle>Evaluate Rental Requests</CardTitle>
+              <CardDescription>
+                Review and update rental request statuses.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Car Type</TableHead>
+                    <TableHead>Dates</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {rentals.map((rental) => (
+                    <TableRow key={rental.id}>
+                      <TableCell>{rental.id}</TableCell>
+                      <TableCell>{rental.customer}</TableCell>
+                      <TableCell>{rental.car}</TableCell>
+                      <TableCell>{rental.dates}</TableCell>
+                      <TableCell>{rental.status}</TableCell>
+                      <TableCell>
+                        <Select
+                          onValueChange={(value) =>
+                            handleEvaluate(rental.id, value)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Update status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Approved">Approve</SelectItem>
+                            <SelectItem value="Rejected">Reject</SelectItem>
+                            <SelectItem value="Pending">Pending</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
