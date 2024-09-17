@@ -109,3 +109,15 @@
 - O sistema deve permitir que o agente cadastre novos automóveis com matrícula, ano, marca, modelo e placa.
 - O agente deve poder modificar ou remover carros do sistema.
 - O sistema deve notificar o agente sobre o sucesso ou falha no cadastro de novos veículos.
+
+## Diagrama de Casos de Uso
+
+![Diagrama de Casos de Uso](artifacts/Diagrama_Caso_de_Uso.jpeg)
+
+## Diagrama de Classes
+
+![Diagrama de Classes](artifacts/DiagramaDeClasse.png)
+
+## Diagrama de Pacotes
+
+![Diagrama de Pacotes](artifacts/DiagramaDePacotes.png)
