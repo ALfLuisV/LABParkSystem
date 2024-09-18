@@ -1,13 +1,15 @@
-package com.park.park_system;
+package com.parsystem.parksystem;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ParkSystemApplication {
+public class ParksystemApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ParkSystemApplication.class, args);
+		SpringApplication.run(ParksystemApplication.class, args);
+
+		System.out.println("Hello World");
 	}
 
 }

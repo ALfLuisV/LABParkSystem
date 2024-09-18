@@ -8,10 +8,10 @@
 		<version>3.3.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.park</groupId>
-	<artifactId>park-system</artifactId>
+	<groupId>com.parsystem</groupId>
+	<artifactId>parksystem</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>park-system</name>
+	<name>parksystem</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

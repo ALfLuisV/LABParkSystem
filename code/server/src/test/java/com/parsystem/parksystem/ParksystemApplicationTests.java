@@ -1,10 +1,10 @@
-package com.park.park_system;
+package com.parsystem.parksystem;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ParkSystemApplicationTests {
+class ParksystemApplicationTests {
 
 	@Test
 	void contextLoads() {
