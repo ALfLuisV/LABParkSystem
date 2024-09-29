@@ -23,6 +23,9 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
+    
+
+    
     @GetMapping
     public List<ClienteDTO> listarTodos() {
         return clienteService.listarTodos();
