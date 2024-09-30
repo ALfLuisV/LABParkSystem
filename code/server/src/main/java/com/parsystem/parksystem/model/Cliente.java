@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "cliente")
-@Data  // Lombok - Gera automaticamente getters, setters, equals, hashCode e toString
-@AllArgsConstructor // Lombok - Gera construtor com todos os campos
-@NoArgsConstructor  // Lombok - Gera construtor sem argumentos
+@Data 
+@AllArgsConstructor
+@NoArgsConstructor
 public class Cliente {
 
     @Id

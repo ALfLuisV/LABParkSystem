@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "agente")
-@Data  // Lombok - Gera automaticamente getters, setters, equals, hashCode e toString
-@AllArgsConstructor // Lombok - Gera construtor com todos os campos
-@NoArgsConstructor  // Lombok - Gera construtor sem argumentos
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Agente {
     @Id
     private String cnpj;

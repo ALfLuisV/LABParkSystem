@@ -39,10 +39,10 @@ public class AgenteController{
         return ResponseEntity.ok(agenteService.atualizarAgente(cnpj, agenteDTO));
     }
 
-    @GetMapping("/{cnpj}")
-    public ResponseEntity<AgenteDTO> buscarPorCnpj(@PathVariable String cnpj){
-        return ResponseEntity.ok(agenteService.buscarPorCnpj( ));
-    }
+    // @GetMapping("/{cnpj}")
+    // public ResponseEntity<AgenteDTO> buscarPorCnpj(@PathVariable String cnpj){
+    //     return ResponseEntity.ok(agenteService.buscarPorCnpj( ));
+    // }
 
     @DeleteMapping("/{cnpj}")
     public ResponseEntity<Void> deletarAgente(@PathVariable String cnpj){

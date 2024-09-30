@@ -49,8 +49,7 @@ public class ClienteService {
     public void deletarCliente(Long id) {
         clienteRepository.deleteById(id);
     }
-
-    // Métodos para conversão entre entidade e DTO
+    
     private ClienteDTO toDTO(Cliente cliente) {
         return new ClienteDTO(
             cliente.getIdcliente(),

@@ -49,7 +49,6 @@ public class AgenteService {
         agenteRepository.deleteById(cnpj);
     }
 
-    // Métodos para conversão entre entidade e DTO
     private AgenteDTO toDTO(Agente agente) {
         return new AgenteDTO(
             agente.getCnpj(),
