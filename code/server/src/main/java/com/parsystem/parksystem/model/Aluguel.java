@@ -19,13 +19,13 @@ public class Aluguel {
     private Double valor;
 
     @Column(nullable = false)
-    private String date;
+    private String data;
 
-    // @ManyToOne
+    @ManyToOne
     @JoinColumn(name = "idveiculo")
-    private Long  idveiculo;
+    private Veiculo veiculo;
 
-    // @ManyToOne
+    @ManyToOne
     @JoinColumn(name = "idcliente")
-    private Long  idcliente;
+    private Cliente cliente;
 }

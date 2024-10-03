@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class Veiculo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idVeic;
+    private Long idveiculo;
 
     @Column(unique = true, nullable = false)
     private String placa;

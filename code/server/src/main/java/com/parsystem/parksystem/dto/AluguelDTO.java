@@ -1,4 +1,7 @@
 package com.parsystem.parksystem.dto;
 
-public record AluguelDTO(Long idAluguel, Double valor, String date) {
+import com.parsystem.parksystem.model.Cliente;
+import com.parsystem.parksystem.model.Veiculo;
+
+public record AluguelDTO(Long idAluguel, Veiculo idveiculo, Cliente idcliente, Double valor, String data) {
 }

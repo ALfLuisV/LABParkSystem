@@ -10,7 +10,7 @@ import com.parsystem.parksystem.dto.AluguelDTO;
 import com.parsystem.parksystem.service.AluguelService;
 
 @RestController
-@RequestMapping("/Alugueis")
+@RequestMapping("/alugueis")
 @CrossOrigin(origins = "http://localhost:3000")
 public class AluguelController {
 

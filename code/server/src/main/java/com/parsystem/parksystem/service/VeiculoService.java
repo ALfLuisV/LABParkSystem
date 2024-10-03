@@ -49,7 +49,7 @@ public class VeiculoService {
 
     private VeiculoDTO toDTO(Veiculo veic) {
         return new VeiculoDTO(
-                veic.getIdVeic(),
+                veic.getIdveiculo(),
                 veic.getPlaca(),
                 veic.getMontadora(),
                 veic.getAno(),
@@ -61,7 +61,7 @@ public class VeiculoService {
 
     private Veiculo toEntity(VeiculoDTO veicDTO) {
         Veiculo veic = new Veiculo();
-        veic.setIdVeic(veicDTO.idVeic());
+        veic.setIdveiculo(veicDTO.idveiculo());
         veic.setPlaca(veicDTO.placa());
         veic.setMontadora(veicDTO.montadora());
         veic.setModelo(veicDTO.modelo());
