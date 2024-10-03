@@ -46,7 +46,7 @@ public class EmpresaService {
     }
 
     private EmpresaDTO toDTO(Empresa empresa) {
-        return new EmpresaDTO(empresa.getIdEmpresa(), empresa.getCpfResponsavel());
+        return new EmpresaDTO(empresa.getIdempresa(), empresa.getCpfResponsavel());
     }
 
     private Empresa toEntity(EmpresaDTO empresaDTO) {

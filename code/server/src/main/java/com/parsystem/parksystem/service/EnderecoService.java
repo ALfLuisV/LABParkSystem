@@ -49,7 +49,7 @@ public class EnderecoService {
     }
 
     private EnderecoDTO toDTO(Endereco endereco) {
-        return new EnderecoDTO(endereco.getIdEndereco(), endereco.getRua(), endereco.getCidade(), endereco.getEstado(), endereco.getPais());
+        return new EnderecoDTO(endereco.getIdendereco(), endereco.getRua(), endereco.getCidade(), endereco.getEstado(), endereco.getPais());
     }
 
     private Endereco toEntity(EnderecoDTO enderecoDTO) {

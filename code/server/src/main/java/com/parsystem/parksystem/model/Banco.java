@@ -14,7 +14,7 @@ public class Banco {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idBanc;
+    private Long idbanco;
 
     @Column(nullable = false)
     private String codigoBanco;

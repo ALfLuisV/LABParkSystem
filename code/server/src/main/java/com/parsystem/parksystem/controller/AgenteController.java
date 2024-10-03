@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import com.parsystem.parksystem.service.AgenteService;
 
 @RestController
 @RequestMapping("/agentes")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AgenteController{
     @Autowired
     private AgenteService agenteService;
@@ -31,12 +33,13 @@ public class AgenteController{
 
     @PostMapping
     public ResponseEntity<AgenteDTO> criarAgente(@RequestBody AgenteDTO agenteDTO){
-        return ResponseEntity.ok(agenteService.buscarPorCnpj(null));
+
+        return ResponseEntity.ok(agenteService.criarAgente(agenteDTO));
     }
 
-    @PutMapping("/{cnpj}")
-    public ResponseEntity<AgenteDTO> atualizarAgente(@PathVariable String cnpj, @RequestBody AgenteDTO agenteDTO){
-        return ResponseEntity.ok(agenteService.atualizarAgente(cnpj, agenteDTO));
+    @PutMapping("/{idAgent}")
+    public ResponseEntity<AgenteDTO> atualizarAgente(@PathVariable Long idAgent, @RequestBody AgenteDTO agenteDTO){
+        return ResponseEntity.ok(agenteService.atualizarAgente(idAgent, agenteDTO));
     }
 
     // @GetMapping("/{cnpj}")
@@ -45,8 +48,8 @@ public class AgenteController{
     // }
 
     @DeleteMapping("/{cnpj}")
-    public ResponseEntity<Void> deletarAgente(@PathVariable String cnpj){
-        agenteService.deletarAgente(cnpj);
+    public ResponseEntity<Void> deletarAgente(@PathVariable Long idAgent){
+        agenteService.deletarAgente(idAgent);
         return ResponseEntity.noContent().build();
     }
 }

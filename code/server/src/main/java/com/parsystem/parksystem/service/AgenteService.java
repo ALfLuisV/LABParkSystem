@@ -23,48 +23,55 @@ public class AgenteService {
     }
 
     public AgenteDTO criarAgente(AgenteDTO agenteDTO) {
+        System.out.println(agenteDTO);
         Agente agente = toEntity(agenteDTO);
         agenteRepository.save(agente);
         return toDTO(agente);
     }
 
-    public AgenteDTO buscarPorCnpj(String cnpj) {
-        Agente agente = agenteRepository.findById(cnpj)
+    public AgenteDTO buscarPorCnpj(Long idagente) {
+        Agente agente = agenteRepository.findById(idagente)
                 .orElseThrow(() -> new RuntimeException("Agente não encontrado"));
         return toDTO(agente);
     }
 
-    public AgenteDTO atualizarAgente(String cnpj, AgenteDTO agenteDTO) {
-        Agente agente = agenteRepository.findById(cnpj)
+    public AgenteDTO atualizarAgente(Long idagente, AgenteDTO agenteDTO) {
+        Agente agente = agenteRepository.findById(idagente)
                 .orElseThrow(() -> new RuntimeException("Agente não encontrado"));
+        agente.setIdagente(agenteDTO.idagente());
         agente.setCnpj(agenteDTO.cnpj());
         agente.setEmail(agenteDTO.email());
         agente.setNome(agenteDTO.nome());
         agente.setTelefone(agenteDTO.telefone());
+        agente.setIdendereco(agenteDTO.idendereco());
         agente.setTipoAgente(agenteDTO.tipoAgente());
         return toDTO(agente);
     }
 
-    public void deletarAgente(String cnpj) {
-        agenteRepository.deleteById(cnpj);
+    public void deletarAgente(Long idagente) {
+        agenteRepository.deleteById(idagente);
     }
 
     private AgenteDTO toDTO(Agente agente) {
         return new AgenteDTO(
-            agente.getCnpj(),
+            agente.getIdagente(),
+            agente.getCnpj(), 
             agente.getNome(),
             agente.getTelefone(),
             agente.getEmail(),
+            agente.getIdendereco(),
             agente.getTipoAgente()
         );
     }
 
     private Agente toEntity(AgenteDTO agenteDTO) {
         Agente agente = new Agente();
+        agente.setIdagente(agenteDTO.idagente());
         agente.setCnpj(agenteDTO.cnpj());
         agente.setNome((agenteDTO.nome()));
         agente.setTelefone(agenteDTO.telefone());
         agente.setEmail(agenteDTO.email());
+        agente.setIdendereco(agenteDTO.idendereco());
         agente.setTipoAgente(agenteDTO.tipoAgente());
         return agente;
     }

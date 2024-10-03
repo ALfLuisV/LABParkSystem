@@ -47,7 +47,7 @@ public class AluguelService {
     }
 
     private AluguelDTO toDTO(Aluguel aluguel) {
-        return new AluguelDTO(aluguel.getIdAluguel(), aluguel.getValor(), aluguel.getDate());
+        return new AluguelDTO(aluguel.getIdaluguel(), aluguel.getValor(), aluguel.getDate());
     }
 
     private Aluguel toEntity(AluguelDTO aluguelDTO) {

@@ -37,7 +37,7 @@ public class AgenteBancoService {
     public AgenteBancoDTO atualizarAgenteBanco(Long id, AgenteBancoDTO agenteBancoDTO) {
         AgenteBanco agenteBanco = agenteBancoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("AgenteBanco não encontrado"));
-        agenteBanco.setCodigoBanco(agenteBancoDTO.codigoBanco());
+        agenteBanco.setIdagentebanco(agenteBancoDTO.idAgenteBanco());
         return toDTO(agenteBanco);
     }
 
@@ -46,12 +46,12 @@ public class AgenteBancoService {
     }
 
     private AgenteBancoDTO toDTO(AgenteBanco agenteBanco) {
-        return new AgenteBancoDTO(agenteBanco.getIdAgenteBanco(), agenteBanco.getCodigoBanco());
+        return new AgenteBancoDTO(agenteBanco.getIdagentebanco(),agenteBanco.getIdagente(), agenteBanco.getCodigobanco());
     }
 
     private AgenteBanco toEntity(AgenteBancoDTO agenteBancoDTO) {
         AgenteBanco agenteBanco = new AgenteBanco();
-        agenteBanco.setCodigoBanco(agenteBancoDTO.codigoBanco());
+        agenteBanco.setIdagentebanco(agenteBancoDTO.idAgenteBanco());
         return agenteBanco;
     }
 }

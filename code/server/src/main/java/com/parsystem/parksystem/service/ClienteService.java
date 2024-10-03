@@ -41,7 +41,6 @@ public class ClienteService {
         cliente.setCpf(clienteDTO.cpf());
         cliente.setRg(clienteDTO.rg());
         cliente.setProfissao(clienteDTO.profissao());
-        cliente.setIdendereco(clienteDTO.idendereco());
         clienteRepository.save(cliente);
         return toDTO(cliente);
     }
@@ -56,8 +55,7 @@ public class ClienteService {
             cliente.getNome(),
             cliente.getCpf(),
             cliente.getRg(),
-            cliente.getProfissao(),
-            cliente.getIdendereco()
+            cliente.getProfissao()
         );
     }
 
@@ -68,7 +66,6 @@ public class ClienteService {
         cliente.setCpf(clienteDTO.cpf());
         cliente.setRg(clienteDTO.rg());
         cliente.setProfissao(clienteDTO.profissao());
-        cliente.setIdendereco(clienteDTO.idendereco());
         return cliente;
     }
 }

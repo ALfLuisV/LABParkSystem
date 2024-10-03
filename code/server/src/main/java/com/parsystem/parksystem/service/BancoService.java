@@ -47,7 +47,7 @@ public class BancoService {
     }
 
     private BancoDTO toDTO(Banco banco) {
-        return new BancoDTO(banco.getIdBanc(), banco.getCodigoBanco(), banco.getPorte());
+        return new BancoDTO(banco.getIdbanco(), banco.getCodigoBanco(), banco.getPorte());
     }
 
     private Banco toEntity(BancoDTO bancoDTO) {

@@ -46,7 +46,7 @@ public class RendimentosService {
     }
 
     private RendimentosDTO toDTO(Rendimentos rendimentos) {
-        return new RendimentosDTO(rendimentos.getIdRendimentos(), rendimentos.getValor());
+        return new RendimentosDTO(rendimentos.getIdrendimento(), rendimentos.getValor());
     }
 
     private Rendimentos toEntity(RendimentosDTO rendimentosDTO) {

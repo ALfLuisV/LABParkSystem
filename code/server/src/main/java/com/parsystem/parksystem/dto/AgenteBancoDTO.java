@@ -1,4 +1,7 @@
 package com.parsystem.parksystem.dto;
 
-public record AgenteBancoDTO(Long idAgenteBanco, String codigoBanco) {
+import com.parsystem.parksystem.model.Agente;
+import com.parsystem.parksystem.model.Banco;
+
+public record AgenteBancoDTO(Long idAgenteBanco, Long  idagente, String  codigoBanco) {
 }

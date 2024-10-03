@@ -14,12 +14,12 @@ public class Rendimentos {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idRendimentos;
+    private Long idrendimento;
 
     @Column(nullable = false)
     private Double valor;
 
-    @ManyToOne
+    // @ManyToOne
     @JoinColumn(name = "idcliente", nullable = false)
-    private Cliente cliente;
+    private Long  cliente;
 }

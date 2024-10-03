@@ -14,7 +14,7 @@ public class Credito {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCredito;
+    private Long idcredito;
 
     @Column(nullable = false)
     private Double valor;
@@ -25,11 +25,11 @@ public class Credito {
     @Column(nullable = false)
     private Integer parcelas;
 
-    @ManyToOne
-    @JoinColumn(name = "idbanc")
-    private Banco banco;
+    // @ManyToOne
+    @JoinColumn(name = "idbanco")
+    private Long  idbanco;
 
-    @ManyToOne
-    @JoinColumn(name = "idalugue")
-    private Aluguel aluguel;
+    // @ManyToOne
+    @JoinColumn(name = "idaluguel")
+    private Long  idaluguel;
 }

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class Aluguel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idAluguel;
+    private Long idaluguel;
 
     @Column(nullable = false)
     private Double valor;
@@ -21,11 +21,11 @@ public class Aluguel {
     @Column(nullable = false)
     private String date;
 
-    @ManyToOne
+    // @ManyToOne
     @JoinColumn(name = "idveiculo")
-    private Veiculo veiculo;
+    private Long  idveiculo;
 
-    @ManyToOne
+    // @ManyToOne
     @JoinColumn(name = "idcliente")
-    private Cliente cliente;
+    private Long  idcliente;
 }

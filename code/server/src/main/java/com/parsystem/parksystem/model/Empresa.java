@@ -13,11 +13,7 @@ import lombok.NoArgsConstructor;
 public class Empresa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idEmpresa;
-
-    @ManyToOne
-    @JoinColumn(name = "idagente")
-    private Agente agente;
+    private Long idempresa;
 
     @Column(nullable = false)
     private String cpfResponsavel;

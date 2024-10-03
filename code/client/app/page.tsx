@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import Axios from "axios";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -81,6 +82,36 @@ export default function CarRentalSystem() {
       )
     );
   };
+
+  // const teste = () => {
+  //   try {
+  //     Axios.post("http://localhost:3002/agentes", {
+  //       cnpj: "696366/0120",
+  //       nome: "Mateus Marques Ferreira",
+  //       telefone: "31996855475",
+  //       email: "exemplo@gmail.com",
+  //       idendereco: 3,
+  //       tipoAgente: 2
+  //     }).then(() => {
+  //       alert("cadastro inserido com sucesso")
+  //     })
+  //       .catch((error: any) => {
+  //         // setVisible(false)
+  //         console.error("Erro ao editar o cadastro", error);
+  //         alert("Erro ao registrar o cadastro");
+  //       });
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+
+
+  // }
+
+
+  useEffect(() => {
+    // fetchPadres();
+    teste()
+}, []);
 
   return (
     <div className="flex flex-col min-h-screen">

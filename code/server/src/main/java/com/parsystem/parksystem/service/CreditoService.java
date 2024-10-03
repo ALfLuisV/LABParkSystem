@@ -48,7 +48,7 @@ public class CreditoService {
     }
 
     private CreditoDTO toDTO(Credito credito) {
-        return new CreditoDTO(credito.getIdCredito(), credito.getValor(), credito.getData(), credito.getParcelas());
+        return new CreditoDTO(credito.getIdcredito(), credito.getValor(), credito.getData(), credito.getParcelas());
     }
 
     private Credito toEntity(CreditoDTO creditoDTO) {

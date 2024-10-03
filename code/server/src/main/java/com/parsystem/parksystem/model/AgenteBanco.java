@@ -14,16 +14,13 @@ public class AgenteBanco {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idAgenteBanco;
+    private Long idagentebanco;
 
-    @ManyToOne
+    // @ManyToOne
     @JoinColumn(name = "idagente", nullable = false)
-    private Agente agente;
+    private Long  idagente;
 
-    @ManyToOne
-    @JoinColumn(name = "idbanc", nullable = false)
-    private Banco banco;
-
-    @Column(nullable = false)
-    private String codigoBanco;
+    // @ManyToOne
+    @JoinColumn(name = "codigobanco", nullable = false)
+    private String  codigobanco;
 }

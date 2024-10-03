@@ -7,6 +7,6 @@ import com.parsystem.parksystem.model.Agente;
 
 
 @Repository
-public interface AgenteRepository extends JpaRepository<Agente, String>{
+public interface AgenteRepository extends JpaRepository<Agente, Long>{
     
 }
