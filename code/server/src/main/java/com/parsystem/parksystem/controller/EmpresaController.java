@@ -11,6 +11,7 @@ import com.parsystem.parksystem.service.EmpresaService;
 
 @RestController
 @RequestMapping("/empresas")
+@CrossOrigin(origins = "http://localhost:3000")
 public class EmpresaController {
 
     @Autowired

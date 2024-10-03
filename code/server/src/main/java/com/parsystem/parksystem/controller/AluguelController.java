@@ -11,6 +11,7 @@ import com.parsystem.parksystem.service.AluguelService;
 
 @RestController
 @RequestMapping("/Alugueis")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AluguelController {
 
     @Autowired

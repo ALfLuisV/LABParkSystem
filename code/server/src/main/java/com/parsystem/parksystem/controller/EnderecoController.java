@@ -11,6 +11,7 @@ import com.parsystem.parksystem.service.EnderecoService;
 
 @RestController
 @RequestMapping("/enderecos")
+@CrossOrigin(origins = "http://localhost:3000")
 public class EnderecoController {
 
     @Autowired

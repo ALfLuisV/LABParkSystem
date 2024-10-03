@@ -46,12 +46,20 @@ export default function CarRentalSystem() {
       dates: "2023-06-15",
     },
   ]);
-
   const [editingRental, setEditingRental] = useState(null);
+  const [carRows, setCarRows] = useState()
+
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Handle form submission logic here
+    // console.log('Form data:', FormData);
+    const formData = new FormData(event.target as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries());
+    const [carModel, diary] = (data.car as string).split("/");
+    const wats = data.dates
+    console.log(carModel)
+    console.log(diary)
+    console.log(wats)
   };
 
   const handleCancel = (id: number) => {
@@ -107,11 +115,32 @@ export default function CarRentalSystem() {
 
   // }
 
+  //função para buscar os veiculos registrados na base de dados
+  async function fetchCars() {
+    try{
+      const response = await Axios.get("http://localhost:3002/veiculos")
+      setCarRows(setCarList(response.data))
+    } catch(e){
+      console.log(e)
+    }
+  }
+
+  //insere os dados dos veiculos em uma lista de um select do frontend
+  function setCarList(array) {
+    const carRows = array.map((elements, i) => (
+      <SelectItem value={elements.idVeic+"/"+elements.diaria} key={i}>{elements.modelo + " - " + elements.diaria + "/dia"}</SelectItem>
+    ))
+    return carRows
+  }
+
+
+
+
 
   useEffect(() => {
-    // fetchPadres();
-    teste()
-}, []);
+    fetchCars()
+    // teste()
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -160,19 +189,13 @@ export default function CarRentalSystem() {
                 <form onSubmit={editingRental ? handleUpdate : handleSubmit}>
                   <div className="grid w-full items-center gap-4">
                     <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="name">Name</Label>
-                      <Input id="name" placeholder="Enter your name" defaultValue={editingRental || ''} readOnly={!!editingRental} />
-                    </div>
-                    <div className="flex flex-col space-y-1.5">
                       <Label htmlFor="car">Car Type</Label>
                       <Select name="car" defaultValue={editingRental || ''}>
                         <SelectTrigger id="car">
-                          <SelectValue placeholder="Select car type" />
+                          <SelectValue placeholder="Select car type"/>
                         </SelectTrigger>
                         <SelectContent position="popper">
-                          <SelectItem value="Sedan">Sedan</SelectItem>
-                          <SelectItem value="SUV">SUV</SelectItem>
-                          <SelectItem value="Sports Car">Sports Car</SelectItem>
+                          {carRows}
                         </SelectContent>
                       </Select>
                     </div>

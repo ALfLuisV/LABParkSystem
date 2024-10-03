@@ -11,6 +11,7 @@ import com.parsystem.parksystem.service.CreditoService;
 
 @RestController
 @RequestMapping("/creditos")
+@CrossOrigin(origins = "http://localhost:3000")
 public class CreditoController {
 
     @Autowired

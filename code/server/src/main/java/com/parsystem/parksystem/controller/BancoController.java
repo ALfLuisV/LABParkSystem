@@ -11,6 +11,7 @@ import com.parsystem.parksystem.service.BancoService;
 
 @RestController
 @RequestMapping("/bancos")
+@CrossOrigin(origins = "http://localhost:3000")
 public class BancoController {
 
     @Autowired

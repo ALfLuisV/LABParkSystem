@@ -39,6 +39,7 @@ public class VeiculoService {
         veic.setModelo(veicDTO.modelo());
         veic.setDisponivel(veicDTO.disponivel());
         veic.setAno(veicDTO.ano());
+        veic.setDiaria(veicDTO.diaria());
         return toDTO(veic);
     }
 
@@ -53,7 +54,9 @@ public class VeiculoService {
                 veic.getMontadora(),
                 veic.getAno(),
                 veic.getModelo(),
-                veic.isDisponivel());
+                veic.isDisponivel(),
+                veic.getDiaria()
+                );
     }
 
     private Veiculo toEntity(VeiculoDTO veicDTO) {
@@ -64,6 +67,7 @@ public class VeiculoService {
         veic.setModelo(veicDTO.modelo());
         veic.setDisponivel(veicDTO.disponivel());
         veic.setAno(veicDTO.ano());
+        veic.setDiaria(veicDTO.diaria());
         return veic;
     }
 }

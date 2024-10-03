@@ -34,4 +34,6 @@ public class Veiculo {
 
     @Column(nullable = false)
     public boolean disponivel;
+
+    private float diaria;
 }

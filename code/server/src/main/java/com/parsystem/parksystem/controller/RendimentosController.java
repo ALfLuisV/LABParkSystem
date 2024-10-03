@@ -11,6 +11,7 @@ import com.parsystem.parksystem.service.RendimentosService;
 
 @RestController
 @RequestMapping("/rendimentos")
+@CrossOrigin(origins = "http://localhost:3000")
 public class RendimentosController {
 
     @Autowired
