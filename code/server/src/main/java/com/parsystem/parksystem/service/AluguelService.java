@@ -62,13 +62,14 @@ public class AluguelService {
         aluguel.getVeiculo(),  // Alterado para obter o ID do Veiculo
         aluguel.getCliente(),  // Alterado para obter o ID do Cliente
         aluguel.getValor(),
-        aluguel.getData()
+        aluguel.getData(),
+        aluguel.getStatus()
     );
 }
 
     private Aluguel toEntity(AluguelDTO aluguelDTO) {
         Aluguel aluguel = new Aluguel();
-        aluguel.setIdaluguel(aluguelDTO.idAluguel());
+        aluguel.setIdaluguel(aluguelDTO.idaluguel());
         // Aqui você precisa obter as entidades Veiculo e Cliente a partir de seus repositórios
         Veiculo veiculo = veiculoRepository.findById(aluguelDTO.idveiculo().getIdveiculo())
                 .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
@@ -78,6 +79,7 @@ public class AluguelService {
         aluguel.setCliente(cliente);  // Agora define a entidade Cliente
         aluguel.setValor(aluguelDTO.valor());
         aluguel.setData(aluguelDTO.data());
+        aluguel.setStatus(aluguelDTO.status());
         return aluguel;
     }
 

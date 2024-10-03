@@ -21,6 +21,9 @@ public class Aluguel {
     @Column(nullable = false)
     private String data;
 
+    @Column(nullable = false)
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "idveiculo")
     private Veiculo veiculo;

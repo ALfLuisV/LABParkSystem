@@ -30,36 +30,19 @@ import { Home, User, Building2, Pencil, X } from "lucide-react";
 
 export default function CarRentalSystem() {
   const [view, setView] = useState("customer");
-  const [rentals, setRentals] = useState([
-    {
-      id: 1,
-      customer: "John Doe",
-      car: "Sedan",
-      status: "Pending",
-      dates: "2023-06-01",
-    },
-    {
-      id: 2,
-      customer: "Jane Smith",
-      car: "SUV",
-      status: "Approved",
-      dates: "2023-06-15",
-    },
-  ]);
+  const [rentals, setRentals] = useState<any[]>([]);
   const [editingRental, setEditingRental] = useState(null);
-  const [carRows, setCarRows] = useState()
-
+  const [carRows, setCarRows] = useState<any[]>([]); // Tipo ajustado para array
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // console.log('Form data:', FormData);
     const formData = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
     const [carModel, diary] = (data.car as string).split("/");
-    const wats = data.dates
-    console.log(carModel)
-    console.log(diary)
-    console.log(wats)
+    const wats = data.dates;
+    console.log(carModel);
+    console.log(diary);
+    console.log(wats);
   };
 
   const handleCancel = (id: number) => {
@@ -86,61 +69,50 @@ export default function CarRentalSystem() {
   const handleEvaluate = (id: number, status: string) => {
     setRentals(
       rentals.map((rental) =>
-        rental.id === id ? { ...rental, status } : rental
+        rental.idaluguel === id ? { ...rental, status } : rental
       )
     );
   };
 
-  // const teste = () => {
-  //   try {
-  //     Axios.post("http://localhost:3002/agentes", {
-  //       cnpj: "696366/0120",
-  //       nome: "Mateus Marques Ferreira",
-  //       telefone: "31996855475",
-  //       email: "exemplo@gmail.com",
-  //       idendereco: 3,
-  //       tipoAgente: 2
-  //     }).then(() => {
-  //       alert("cadastro inserido com sucesso")
-  //     })
-  //       .catch((error: any) => {
-  //         // setVisible(false)
-  //         console.error("Erro ao editar o cadastro", error);
-  //         alert("Erro ao registrar o cadastro");
-  //       });
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-
-
-  // }
-
-  //função para buscar os veiculos registrados na base de dados
+  // Função para buscar os veículos registrados na base de dados
   async function fetchCars() {
-    try{
-      const response = await Axios.get("http://localhost:3002/veiculos")
-      setCarRows(setCarList(response.data))
-    } catch(e){
-      console.log(e)
+    try {
+      const response = await Axios.get("http://localhost:3002/veiculos");
+      setCarRows(setCarList(response.data));
+    } catch (e) {
+      console.log(e);
     }
   }
 
-  //insere os dados dos veiculos em uma lista de um select do frontend
-  function setCarList(array) {
-    const carRows = array.map((elements, i) => (
-      <SelectItem value={elements.idVeic+"/"+elements.diaria} key={i}>{elements.modelo + " - " + elements.diaria + "/dia"}</SelectItem>
-    ))
-    return carRows
+  // Insere os dados dos veículos em uma lista de um select no frontend
+  function setCarList(array: any[]) {
+    const carRows = array.map((elements) => (
+      <SelectItem
+        value={elements.idVeic + "/" + elements.diaria}
+        key={elements.idVeic} // Usando o idVeic como chave
+      >
+        {elements.modelo + " - " + elements.diaria + "/dia"}
+      </SelectItem>
+    ));
+    return carRows;
   }
 
-
-
+  useEffect(() => {
+    fetchCars();
+  }, []);
 
 
   useEffect(() => {
-    fetchCars()
-    // teste()
+    Axios.get("http://localhost:3002/alugueis")
+      .then((response) => {   
+        setRentals(response.data);
+        console.log(response.data); 
+      })
+      .catch((error) => {
+        console.error("Ocorreu um erro ao buscar os alugueis:", error);
+      });
   }, []);
+
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -221,18 +193,18 @@ export default function CarRentalSystem() {
                     <TableHeader>
                       <TableRow>
                         <TableHead className="w-[15%]">ID</TableHead>
-                        <TableHead className="w-[25%]">Car Type</TableHead>
-                        <TableHead className="w-[25%]">Dates</TableHead>
+                        <TableHead className="w-[25%]">Carro</TableHead>
+                        <TableHead className="w-[25%]">Data</TableHead>
                         <TableHead className="w-[25%]">Status</TableHead>
-                        <TableHead className="w-[35%]">Actions</TableHead>
+                        <TableHead className="w-[35%]">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {rentals.map((rental) => (
-                        <TableRow key={rental.id}>
-                          <TableCell className="w-[10%]">{rental.id}</TableCell>
-                          <TableCell className="w-[20%]">{rental.car}</TableCell>
-                          <TableCell className="w-[20%]">{rental.dates}</TableCell>
+                        <TableRow key={rental.idaluguel}>
+                          <TableCell className="w-[10%]">{rental.idaluguel}</TableCell>
+                          <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
+                          <TableCell className="w-[20%]">{rental.data}</TableCell>
                           <TableCell className="w-[20%]">{rental.status}</TableCell>
                           <TableCell className="w-[30%]">
                             <div className="flex space-x-2">
@@ -266,20 +238,20 @@ export default function CarRentalSystem() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-[10%]">ID</TableHead>
-                      <TableHead className="w-[20%]">Customer</TableHead>
-                      <TableHead className="w-[20%]">Car Type</TableHead>
-                      <TableHead className="w-[20%]">Dates</TableHead>
+                      <TableHead className="w-[20%]">Cliente</TableHead>
+                      <TableHead className="w-[20%]">Carro</TableHead>
+                      <TableHead className="w-[20%]">Data</TableHead>
                       <TableHead className="w-[15%]">Status</TableHead>
                       <TableHead className="w-[15%]">Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {rentals.map((rental) => (
-                      <TableRow key={rental.id}>
-                        <TableCell className="w-[10%]">{rental.id}</TableCell>
-                        <TableCell className="w-[20%]">{rental.customer}</TableCell>
-                        <TableCell className="w-[20%]">{rental.car}</TableCell>
-                        <TableCell className="w-[20%]">{rental.dates}</TableCell>
+                      <TableRow key={rental.idaluguel}>
+                        <TableCell className="w-[10%]">{rental.idaluguel}</TableCell>
+                        <TableCell className="w-[20%]">{rental.idcliente.nome}</TableCell>
+                        <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
+                        <TableCell className="w-[20%]">{rental.data}</TableCell>
                         <TableCell className="w-[15%]">{rental.status}</TableCell>
                         <TableCell className="w-[15%]">
                           <Select onValueChange={(value) => handleEvaluate(rental.id, value)}>
@@ -287,9 +259,9 @@ export default function CarRentalSystem() {
                               <SelectValue placeholder="Update status" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Approved">Approve</SelectItem>
-                              <SelectItem value="Rejected">Reject</SelectItem>
-                              <SelectItem value="Pending">Pending</SelectItem>
+                              <SelectItem value="aprovado">Aprovado</SelectItem>
+                              <SelectItem value="rejeitado">Rejeitado</SelectItem>
+                              <SelectItem value="pendente">Pendente</SelectItem>
                             </SelectContent>
                           </Select>
                         </TableCell>
