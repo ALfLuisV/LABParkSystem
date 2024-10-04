@@ -32,6 +32,9 @@ export default function CarRentalSystem() {
   const [rentals, setRentals] = useState<any[]>([]);//armazena os alugueis do usuario que está logado
   const [allRentals, setAllRentals] = useState<any[]>([])//armazena todos os alugueis do sistema 
   const [editingRental, setEditingRental] = useState(null);
+  const [editData, setEditData] = useState(null);
+  const [editCar, setEditCar] = useState("")
+  const [editId, setEditId] = useState(-1)
   const [carRows, setCarRows] = useState<any[]>([]); // Tipo ajustado para array de veiculos que foi puxado do bd
   const [user, setUser] = useState<any[]>([{//state utilizado para armazenar os dados do usuário logado
     idCliente: 1,
@@ -88,11 +91,11 @@ export default function CarRentalSystem() {
   //função para cancelar um aluguel 
   const handleCancel = (id: number) => {
 
-    try{
+    try {
       Axios.delete(`http://localhost:3002/alugueis/${id}`)
-      fetchUserRents() 
+      fetchUserRents()
       alert("Contrato de aluguel excluido com sucesso!!!")
-    }catch(e){
+    } catch (e) {
       console.log(e)
     }
   };
@@ -100,6 +103,10 @@ export default function CarRentalSystem() {
 
 
   const handleModify = (rental: any) => {
+    console.log(rental.idaluguel)
+    setEditId(rental.idaluguel)
+    setEditCar(rental.idveiculo.idveiculo + "/" + rental.valor)
+    setEditData(rental.data)
     setEditingRental(rental);
   };
 
@@ -107,16 +114,41 @@ export default function CarRentalSystem() {
 
   const handleUpdate = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const updatedRental = {
-      ...(editingRental as any),
-    };
-    setRentals(
-      rentals.map((rental) =>
-        rental.id === updatedRental.id ? updatedRental : rental
-      )
-    );
+    const formData = new FormData(event.target as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries());
+    const [carID, diary] = (data.car as string).split("/");
+    const datas = data.dates;
+    console.log(typeof carID);
+    console.log(typeof diary);
+    console.log(typeof datas);
+
+    const requestData = { idRent: editId, rentalCarID: carID, rentalDate: datas.toString(), diaryValue: diary }
+    rentalPostEdit(requestData)
     setEditingRental(null);
   };
+
+  async function rentalPostEdit(rentalObject: { idRent: number, diaryValue: string, rentalCarID: string, rentalDate: string }) {
+    console.log(rentalObject)
+    console.log(rentalObject.rentalCarID);
+    try {
+      Axios.put(`http://localhost:3002/alugueis/edit/${editId}`, {
+        idveiculo: parseInt(rentalObject.rentalCarID),//no dto de aluguel, este campo é do formato LONG
+        idcliente: user[0].idCliente,//no dto de aluguel, este campo é do formato LONG
+        valor: parseFloat(rentalObject.diaryValue),
+        data: rentalObject.rentalDate,
+        status: "pendente",
+      })
+        .then(() => {
+          fetchUserRents()
+          alert("Aluguel alterado com sucesso, aguardando aprovação")
+        })
+    } catch (e) {
+      console.log(e)
+    }
+
+  }
+
+
 
 
 
@@ -227,7 +259,7 @@ export default function CarRentalSystem() {
                   <div className="grid w-full items-center gap-4">
                     <div className="flex flex-col space-y-1.5">
                       <Label htmlFor="car">Car Type</Label>
-                      <Select name="car" defaultValue={editingRental || ''}>
+                      <Select name="car" defaultValue={editingRental || ''} value={editCar} onValueChange={(value)=>{setEditCar(value)}}>
                         <SelectTrigger id="car">
                           <SelectValue placeholder="Select car type" />
                         </SelectTrigger>
@@ -238,7 +270,7 @@ export default function CarRentalSystem() {
                     </div>
                     <div className="flex flex-col space-y-1.5">
                       <Label htmlFor="dates">Rental Dates</Label>
-                      <Input id="dates" name="dates" type="date" defaultValue={editingRental || ''} />
+                      <Input id="dates" name="dates" type="date" defaultValue={editData || ''} />
                     </div>
                   </div>
                   <div className="flex justify-between mt-4">

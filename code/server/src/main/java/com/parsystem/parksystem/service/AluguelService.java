@@ -76,13 +76,29 @@ public class AluguelService {
         Aluguel aluguel = aluguelRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Aluguel não encontrado"));
         System.out.println(aluguel);
-        aluguel.setValor(aluguelDTO.valor());
-        aluguel.setData(aluguelDTO.data());
+        // aluguel.setValor(aluguelDTO.valor());
+        // aluguel.setData(aluguelDTO.data());
         aluguel.setStatus(aluguelDTO.status());
         System.out.println(aluguel);
         aluguelRepository.save(aluguel);
         return toDTO(aluguel);
     }
+
+
+    public AluguelDTO atualizarInfoAluguel(Long id, AluguelDTO aluguelDTO) {
+        Aluguel aluguel = aluguelRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Aluguel não encontrado"));
+        System.out.println(aluguel);
+        aluguel.setVeiculo(aluguelDTO.idveiculo());
+        aluguel.setValor(aluguelDTO.valor());
+        aluguel.setData(aluguelDTO.data());
+        // aluguel.setStatus(aluguelDTO.status());
+        System.out.println(aluguel);
+        aluguelRepository.save(aluguel);
+        return toDTO(aluguel);
+    }
+
+
 
     public void deletarAluguel(Long id) {
         aluguelRepository.deleteById(id);

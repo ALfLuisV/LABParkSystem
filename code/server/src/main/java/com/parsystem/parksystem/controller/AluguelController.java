@@ -43,6 +43,11 @@ public class AluguelController {
         return ResponseEntity.ok(AluguelService.atualizarAluguel(id, AluguelDTO));
     }
 
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<AluguelDTO> atualizarInfosAluguel(@PathVariable Long id, @RequestBody AluguelDTO AluguelDTO) {
+        return ResponseEntity.ok(AluguelService.atualizarInfoAluguel(id, AluguelDTO));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarAluguel(@PathVariable Long id) {
         AluguelService.deletarAluguel(id);
