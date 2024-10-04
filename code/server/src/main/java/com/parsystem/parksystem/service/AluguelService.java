@@ -59,11 +59,28 @@ public class AluguelService {
                 .collect(Collectors.toList());
     }
 
+
+    public List<AluguelDTO> buscaPorStatus(String status) {
+        List<Aluguel> rents = aluguelRepository.findByStatus(status); // Assumindo que esse método retorna List<Aluguel>
+
+        if (rents.isEmpty()) {
+            throw new RuntimeException("Alugueis não encontrados");
+        }
+
+        return rents.stream()
+                .map(this::toDTO) // Convertendo Aluguel para AluguelDTO
+                .collect(Collectors.toList());
+    }
+
     public AluguelDTO atualizarAluguel(Long id, AluguelDTO aluguelDTO) {
         Aluguel aluguel = aluguelRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Aluguel não encontrado"));
+        System.out.println(aluguel);
         aluguel.setValor(aluguelDTO.valor());
         aluguel.setData(aluguelDTO.data());
+        aluguel.setStatus(aluguelDTO.status());
+        System.out.println(aluguel);
+        aluguelRepository.save(aluguel);
         return toDTO(aluguel);
     }
 

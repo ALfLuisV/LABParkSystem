@@ -10,4 +10,6 @@ import java.util.List;
 public interface AluguelRepository extends JpaRepository<Aluguel, Long> {
 
     List<Aluguel> findByClienteIdcliente(Long idcliente);
+
+    List<Aluguel> findByStatus(String status);
 }

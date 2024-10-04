@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.parsystem.parksystem.dto.AluguelDTO;
 import com.parsystem.parksystem.service.AluguelService;
-import com.parsystem.parksystem.service.VeiculoService;
 
 @RestController
 @RequestMapping("/alugueis")
@@ -27,6 +26,11 @@ public class AluguelController {
     public List<AluguelDTO> listarPorCliente(@PathVariable Long idcliente){ 
         // System.out.println("CONTROLLER AQUIIIII:::::::::::::::::::::::::::::::::::::");
         return AluguelService.buscaPorClientId(idcliente);
+    }
+
+    @GetMapping("/status/{status}")
+    public List<AluguelDTO> listarPorCliente(@PathVariable String status){ 
+        return AluguelService.buscaPorStatus(status);
     }
 
     @PostMapping

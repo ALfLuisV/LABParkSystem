@@ -29,8 +29,8 @@ import {
 import { Home, User, Building2, Pencil, X } from "lucide-react";
 
 export default function CarRentalSystem() {
-  const [view, setView] = useState("customer");
-  const [rentals, setRentals] = useState<any[]>([]);
+  const [rentals, setRentals] = useState<any[]>([]);//armazena os alugueis do usuario que está logado
+  const [allRentals, setAllRentals] = useState<any[]>([])//armazena todos os alugueis do sistema 
   const [editingRental, setEditingRental] = useState(null);
   const [carRows, setCarRows] = useState<any[]>([]); // Tipo ajustado para array de veiculos que foi puxado do bd
   const [user, setUser] = useState<any[]>([{//state utilizado para armazenar os dados do usuário logado
@@ -39,7 +39,8 @@ export default function CarRentalSystem() {
     cpf: "18963256996",
     rg: "19369050",
     profissao: "Cafetão",
-    idendereco: 1
+    idendereco: 1,
+    type: "cliente",
   }])
 
 
@@ -62,7 +63,7 @@ export default function CarRentalSystem() {
   };
 
 
-//função para inserir um aluguel novo no banco de dados
+  //função para inserir um aluguel novo no banco de dados
   async function rentalPost(rentalObject: { diaryValue: string, rentalCarID: string, rentalDate: string }) {
     try {
       Axios.post("http://localhost:3002/alugueis", {
@@ -73,7 +74,7 @@ export default function CarRentalSystem() {
         status: "pendente",
       })
         .then(() => {
-          fetchRents()
+          fetchUserRents()
           alert("Aluguel registrado com sucesso, aguardando aprovação")
         })
     } catch (e) {
@@ -84,14 +85,25 @@ export default function CarRentalSystem() {
 
 
 
-
+  //função para cancelar um aluguel 
   const handleCancel = (id: number) => {
-    setRentals(rentals.filter((rental) => rental.id !== id));
+
+    try{
+      Axios.delete(`http://localhost:3002/alugueis/${id}`)
+      fetchUserRents() 
+      alert("Contrato de aluguel excluido com sucesso!!!")
+    }catch(e){
+      console.log(e)
+    }
   };
+
+
 
   const handleModify = (rental: any) => {
     setEditingRental(rental);
   };
+
+
 
   const handleUpdate = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -106,12 +118,26 @@ export default function CarRentalSystem() {
     setEditingRental(null);
   };
 
-  const handleEvaluate = (id: number, status: string) => {
-    setRentals(
-      rentals.map((rental) =>
-        rental.idaluguel === id ? { ...rental, status } : rental
-      )
-    );
+
+
+  //função para alterar o status do pedido de aluguel
+  async function handleEvaluate(rental: any, status: string) {
+    try {
+      console.log(rental.idaluguel)
+      await Axios.put(`http://localhost:3002/alugueis/${rental.idaluguel}`, {
+        idveiculo: rental.idveiculo,//no dto de aluguel, este campo é do formato LONG
+        idcliente: rental.idcliente,//no dto de aluguel, este campo é do formato LONG
+        valor: rental.valor,
+        data: rental.data,
+        status: status,
+      })
+        .then(() => {
+          fetchPendingRents()
+          alert("Status atualizado com sucesso!!!")
+        })
+    } catch (e) {
+      console.log(e)
+    }
   };
 
   // Função para buscar os veículos registrados na base de dados
@@ -125,7 +151,7 @@ export default function CarRentalSystem() {
   }
 
   //função para buscar os contratos de alugueis do bd
-  async function fetchRents() {
+  async function fetchUserRents() {
     try {
       Axios.get(`http://localhost:3002/alugueis/${user[0].idCliente}`)
         .then((response) => {
@@ -135,6 +161,19 @@ export default function CarRentalSystem() {
         .catch((error) => {
           console.error("Ocorreu um erro ao buscar os alugueis:", error);
         });
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+
+  async function fetchPendingRents() {
+    try {
+      Axios.get("http://localhost:3002/alugueis/status/pendente")
+        .then((response) => {
+          setAllRentals(response.data)
+          console.log(response.data)
+        })
     } catch (e) {
       console.log(e)
     }
@@ -156,8 +195,10 @@ export default function CarRentalSystem() {
 
 
   useEffect(() => {
-    fetchCars();
-    fetchRents()
+    if (user[0].type == "cliente") {
+      fetchCars();
+      fetchUserRents()
+    } else fetchPendingRents()
   }, []);
 
   return (
@@ -169,34 +210,12 @@ export default function CarRentalSystem() {
               <Home className="h-6 w-6 mr-2" />
               <span className="font-bold text-lg">Wellcome, {user[0].nome}!</span>
             </div>
-            <nav>
-              <ul className="flex space-x-4">
-                <li>
-                  <Button
-                    variant={view === "customer" ? "secondary" : "ghost"}
-                    onClick={() => setView("customer")}
-                  >
-                    <User className="h-4 w-4 mr-2" />
-                    Customer
-                  </Button>
-                </li>
-                <li>
-                  <Button
-                    variant={view === "agent" ? "secondary" : "ghost"}
-                    onClick={() => setView("agent")}
-                  >
-                    <Building2 className="h-4 w-4 mr-2" />
-                    Agent
-                  </Button>
-                </li>
-              </ul>
-            </nav>
           </div>
         </div>
       </header>
 
       <main className="flex-grow container mx-auto p-4">
-        {view === "customer" ? (
+        {user[0].type === "cliente" ? (
           <div className="space-y-4">
             <Card>
               <CardHeader>
@@ -247,24 +266,41 @@ export default function CarRentalSystem() {
                     </TableHeader>
                     <TableBody>
                       {rentals.map((rental) => (
-                        <TableRow key={rental.idaluguel}>
-                          <TableCell className="w-[10%]">{rental.idaluguel}</TableCell>
-                          <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
-                          <TableCell className="w-[20%]">{rental.data}</TableCell>
-                          <TableCell className="w-[20%]">{rental.status}</TableCell>
-                          <TableCell className="w-[30%]">
-                            <div className="flex space-x-2">
-                              <Button variant="outline" size="sm" onClick={() => handleModify(rental)}>
-                                <Pencil className="h-4 w-4 mr-1" />
-                                Modify
-                              </Button>
-                              <Button variant="destructive" size="sm" onClick={() => handleCancel(rental.id)}>
-                                <X className="h-4 w-4 mr-1" />
-                                Cancel
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
+                        rental.status == "pendente" ? (
+                          <TableRow key={rental.idaluguel}>
+                            <TableCell className="w-[10%]">{rental.idaluguel}</TableCell>
+                            <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
+                            <TableCell className="w-[20%]">{rental.data}</TableCell>
+                            <TableCell className="w-[20%]">{rental.status}</TableCell>
+                            <TableCell className="w-[30%]">
+                              <div className="flex space-x-2">
+                                <Button variant="outline" size="sm" onClick={() => handleModify(rental)}>
+                                  <Pencil className="h-4 w-4 mr-1" />
+                                  Modify
+                                </Button>
+                                <Button variant="destructive" size="sm" onClick={() => handleCancel(rental.idaluguel)}>
+                                  <X className="h-4 w-4 mr-1" />
+                                  Cancel
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          <TableRow key={rental.idaluguel}>
+                            <TableCell className="w-[10%]">{rental.idaluguel}</TableCell>
+                            <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
+                            <TableCell className="w-[20%]">{rental.data}</TableCell>
+                            <TableCell className="w-[20%]">{rental.status}</TableCell>
+                            <TableCell className="w-[30%]">
+                              <div className="flex space-x-2">
+                                <Button variant="destructive" size="sm" onClick={() => handleCancel(rental.idaluguel)}>
+                                  <X className="h-4 w-4 mr-1" />
+                                  Cancel
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )
                       ))}
                     </TableBody>
                   </Table>
@@ -283,24 +319,26 @@ export default function CarRentalSystem() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[10%]">ID</TableHead>
+                      <TableHead className="w-[5%]">ID</TableHead>
                       <TableHead className="w-[20%]">Cliente</TableHead>
-                      <TableHead className="w-[20%]">Carro</TableHead>
+                      <TableHead className="w-[15%]">Carro</TableHead>
                       <TableHead className="w-[20%]">Data</TableHead>
+                      <TableHead className="w-[10%]">Valor</TableHead>
                       <TableHead className="w-[15%]">Status</TableHead>
                       <TableHead className="w-[15%]">Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {rentals.map((rental) => (
+                    {allRentals.map((rental) => (
                       <TableRow key={rental.idaluguel}>
                         <TableCell className="w-[10%]">{rental.idaluguel}</TableCell>
                         <TableCell className="w-[20%]">{rental.idcliente.nome}</TableCell>
                         <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
                         <TableCell className="w-[20%]">{rental.data}</TableCell>
+                        <TableCell className="w-[10%]">{rental.valor}</TableCell>
                         <TableCell className="w-[15%]">{rental.status}</TableCell>
                         <TableCell className="w-[15%]">
-                          <Select onValueChange={(value) => handleEvaluate(rental.id, value)}>
+                          <Select onValueChange={(value) => handleEvaluate(rental, value)}>
                             <SelectTrigger>
                               <SelectValue placeholder="Update status" />
                             </SelectTrigger>
