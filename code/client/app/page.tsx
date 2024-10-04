@@ -95,6 +95,7 @@ export default function CarRentalSystem() {
       Axios.delete(`http://localhost:3002/alugueis/${id}`)
       fetchUserRents()
       alert("Contrato de aluguel excluido com sucesso!!!")
+      window.location.reload();
     } catch (e) {
       console.log(e)
     }
