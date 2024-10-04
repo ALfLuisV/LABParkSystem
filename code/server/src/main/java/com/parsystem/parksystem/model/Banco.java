@@ -21,4 +21,8 @@ public class Banco {
 
     @Column(nullable = false)
     private String porte;
+
+    public Banco(int id) {
+        this.idbanco = (long) id;
+    }
 }

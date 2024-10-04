@@ -33,4 +33,8 @@ public class Cliente {
     // @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idendereco")
     private Long idendereco;
+
+    public Cliente(int id) {
+        this.idcliente = (long) id;
+    }
 }

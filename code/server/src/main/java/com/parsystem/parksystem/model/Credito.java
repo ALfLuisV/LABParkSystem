@@ -32,4 +32,8 @@ public class Credito {
     // @ManyToOne
     @JoinColumn(name = "idaluguel")
     private Long  idaluguel;
+
+    public Credito(int id) {
+        this.idcredito = (long) id;
+    }
 }

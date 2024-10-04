@@ -41,6 +41,10 @@ public class Agente {
 
     @Column(name = "tipoagente", nullable = false)
     private Short  tipoAgente;
+
+    public Agente(int id) {
+        this.idagente = (long) id;
+    }
 }
 
 

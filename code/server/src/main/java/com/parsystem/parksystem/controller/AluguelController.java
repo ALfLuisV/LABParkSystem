@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.parsystem.parksystem.dto.AluguelDTO;
 import com.parsystem.parksystem.service.AluguelService;
+import com.parsystem.parksystem.service.VeiculoService;
 
 @RestController
 @RequestMapping("/alugueis")
@@ -22,9 +23,15 @@ public class AluguelController {
         return AluguelService.listarTodos();
     }
 
+    @GetMapping("/{idcliente}")
+    public List<AluguelDTO> listarPorCliente(@PathVariable Long idcliente){ 
+        // System.out.println("CONTROLLER AQUIIIII:::::::::::::::::::::::::::::::::::::");
+        return AluguelService.buscaPorClientId(idcliente);
+    }
+
     @PostMapping
-    public ResponseEntity<AluguelDTO> criarAluguel(@RequestBody AluguelDTO AluguelDTO) {
-        return ResponseEntity.ok(AluguelService.criarAluguel(AluguelDTO));
+    public ResponseEntity<AluguelDTO> criarAluguel(@RequestBody AluguelDTO aluguelDTO) {
+        return ResponseEntity.ok(AluguelService.criarAluguel(aluguelDTO));
     }
 
     @PutMapping("/{id}")

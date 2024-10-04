@@ -23,4 +23,8 @@ public class AgenteBanco {
     // @ManyToOne
     @JoinColumn(name = "codigobanco", nullable = false)
     private String  codigobanco;
+
+    public AgenteBanco(int id) {
+        this.idagentebanco = (long) id;
+    }
 }

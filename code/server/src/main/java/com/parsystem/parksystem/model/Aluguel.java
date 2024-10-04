@@ -31,4 +31,8 @@ public class Aluguel {
     @ManyToOne
     @JoinColumn(name = "idcliente")
     private Cliente cliente;
+
+    public Aluguel(int id) {
+        this.idaluguel = (long) id;
+    }
 }

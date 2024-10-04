@@ -32,18 +32,58 @@ export default function CarRentalSystem() {
   const [view, setView] = useState("customer");
   const [rentals, setRentals] = useState<any[]>([]);
   const [editingRental, setEditingRental] = useState(null);
-  const [carRows, setCarRows] = useState<any[]>([]); // Tipo ajustado para array
+  const [carRows, setCarRows] = useState<any[]>([]); // Tipo ajustado para array de veiculos que foi puxado do bd
+  const [user, setUser] = useState<any[]>([{//state utilizado para armazenar os dados do usuário logado
+    idCliente: 1,
+    nome: "Mateus Boladão",
+    cpf: "18963256996",
+    rg: "19369050",
+    profissao: "Cafetão",
+    idendereco: 1
+  }])
 
+
+
+
+
+  //função que trata os dados, para o envio da requisição de cadastro no bd
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
-    const [carModel, diary] = (data.car as string).split("/");
-    const wats = data.dates;
-    console.log(carModel);
-    console.log(diary);
-    console.log(wats);
+    const [carID, diary] = (data.car as string).split("/");
+    const datas = data.dates;
+    console.log(typeof carID);
+    console.log(typeof diary);
+    console.log(typeof datas);
+
+    const requestData = { rentalCarID: carID, rentalDate: datas.toString(), diaryValue: diary }
+    rentalPost(requestData)
   };
+
+
+//função para inserir um aluguel novo no banco de dados
+  async function rentalPost(rentalObject: { diaryValue: string, rentalCarID: string, rentalDate: string }) {
+    try {
+      Axios.post("http://localhost:3002/alugueis", {
+        idveiculo: parseInt(rentalObject.rentalCarID),//no dto de aluguel, este campo é do formato LONG
+        idcliente: user[0].idCliente,//no dto de aluguel, este campo é do formato LONG
+        valor: parseFloat(rentalObject.diaryValue),
+        data: rentalObject.rentalDate,
+        status: "pendente",
+      })
+        .then(() => {
+          fetchRents()
+          alert("Aluguel registrado com sucesso, aguardando aprovação")
+        })
+    } catch (e) {
+      console.log(e)
+    }
+
+  }
+
+
+
 
   const handleCancel = (id: number) => {
     setRentals(rentals.filter((rental) => rental.id !== id));
@@ -84,35 +124,41 @@ export default function CarRentalSystem() {
     }
   }
 
+  //função para buscar os contratos de alugueis do bd
+  async function fetchRents() {
+    try {
+      Axios.get(`http://localhost:3002/alugueis/${user[0].idCliente}`)
+        .then((response) => {
+          setRentals(response.data);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Ocorreu um erro ao buscar os alugueis:", error);
+        });
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   // Insere os dados dos veículos em uma lista de um select no frontend
   function setCarList(array: any[]) {
     const carRows = array.map((elements) => (
       <SelectItem
-        value={elements.idVeic + "/" + elements.diaria}
-        key={elements.idVeic} // Usando o idVeic como chave
+        value={elements.idveiculo + "/" + elements.diaria}
+        key={elements.idveiculo}
       >
-        {elements.modelo + " - " + elements.diaria + "/dia"}
+        {elements.modelo + " - " + elements.diaria + "/Dia"}
       </SelectItem>
     ));
     return carRows;
   }
 
+
+
   useEffect(() => {
     fetchCars();
+    fetchRents()
   }, []);
-
-
-  useEffect(() => {
-    Axios.get("http://localhost:3002/alugueis")
-      .then((response) => {   
-        setRentals(response.data);
-        console.log(response.data); 
-      })
-      .catch((error) => {
-        console.error("Ocorreu um erro ao buscar os alugueis:", error);
-      });
-  }, []);
-
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -121,7 +167,7 @@ export default function CarRentalSystem() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <Home className="h-6 w-6 mr-2" />
-              <span className="font-bold text-lg">Car Rental System</span>
+              <span className="font-bold text-lg">Wellcome, {user[0].nome}!</span>
             </div>
             <nav>
               <ul className="flex space-x-4">
@@ -164,7 +210,7 @@ export default function CarRentalSystem() {
                       <Label htmlFor="car">Car Type</Label>
                       <Select name="car" defaultValue={editingRental || ''}>
                         <SelectTrigger id="car">
-                          <SelectValue placeholder="Select car type"/>
+                          <SelectValue placeholder="Select car type" />
                         </SelectTrigger>
                         <SelectContent position="popper">
                           {carRows}
@@ -185,7 +231,7 @@ export default function CarRentalSystem() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Your Rental Requests</CardTitle>
+                <CardTitle>CarRental System</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">

@@ -17,4 +17,8 @@ public class Empresa {
 
     @Column(nullable = false)
     private String cpfResponsavel;
+
+    public Empresa(int id) {
+        this.idempresa = (long) id;
+    }
 }

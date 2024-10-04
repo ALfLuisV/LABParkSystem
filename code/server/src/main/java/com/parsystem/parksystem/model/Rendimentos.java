@@ -22,4 +22,9 @@ public class Rendimentos {
     // @ManyToOne
     @JoinColumn(name = "idcliente", nullable = false)
     private Long  cliente;
+
+    public Rendimentos(int id) {
+        this.idrendimento = (long) id;
+    }
+
 }

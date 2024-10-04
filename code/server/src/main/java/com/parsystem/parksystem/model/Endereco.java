@@ -28,4 +28,8 @@ public class Endereco {
 
     @Column(nullable = false)
     private String pais;
+
+    public Endereco(int id) {
+        this.idendereco = (long) id;
+    }
 }

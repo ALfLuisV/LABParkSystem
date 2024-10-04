@@ -36,4 +36,8 @@ public class Veiculo {
     public boolean disponivel;
 
     private float diaria;
+
+    public Veiculo(int id) {
+        this.idveiculo = (long) id;
+    }
 }
