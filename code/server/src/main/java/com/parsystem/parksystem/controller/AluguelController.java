@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.parsystem.parksystem.dto.AluguelDTO;
-import com.parsystem.parksystem.model.Veiculo;
 import com.parsystem.parksystem.service.AluguelService;
-import com.parsystem.parksystem.service.VeiculoService;
 
 @RestController
 @RequestMapping("/alugueis")

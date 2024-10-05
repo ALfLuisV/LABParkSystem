@@ -246,7 +246,7 @@ export default function CarRentalSystem() {
         <TableCell className="w-[20%]">{elements.montadora}</TableCell>
         <TableCell className="w-[20%]">{elements.ano}</TableCell>
         <TableCell className="w-[30%]">{elements.diaria}</TableCell>
-        <TableCell className="w-[30%]">{elements.disponivel ? "Sim": "Não"}</TableCell>
+        <TableCell className="w-[30%]">{elements.disponivel ? "Disponivel": "Locado"}</TableCell>
       </TableRow>
     ))
 
@@ -385,7 +385,7 @@ export default function CarRentalSystem() {
                           <TableHead className="w-[20%]">Montadora</TableHead>
                           <TableHead className="w-[15%]">Ano</TableHead>
                           <TableHead className="w-[15%]">Diaria</TableHead>
-                          <TableHead className="w-[20]">Disponivel</TableHead>
+                          <TableHead className="w-[20]">Disponibilidade</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
