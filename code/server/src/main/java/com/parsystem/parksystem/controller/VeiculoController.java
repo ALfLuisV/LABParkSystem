@@ -42,6 +42,12 @@ public class VeiculoController {
         return ResponseEntity.ok(veiculoService.buscarPorId(id));
     }
 
+    @GetMapping("/status/{disponivel}")
+    public List<VeiculoDTO> buscarPorDisponivel(@PathVariable Boolean disponivel){
+        return veiculoService.buscaPorDisponivel(disponivel);
+    }
+
+
 
     @PutMapping("/id")
     public ResponseEntity<VeiculoDTO> atualizarVeiculo(@PathVariable Long id, @RequestBody VeiculoDTO veiculoDTO){

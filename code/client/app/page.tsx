@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Select,
   SelectContent,
@@ -35,6 +36,7 @@ export default function CarRentalSystem() {
   const [editData, setEditData] = useState(null);
   const [editCar, setEditCar] = useState("")
   const [editId, setEditId] = useState(-1)
+  const [carTableData, setCarTableData] = useState<any[]>([])
   const [carRows, setCarRows] = useState<any[]>([]); // Tipo ajustado para array de veiculos que foi puxado do bd
   const [user, setUser] = useState<any[]>([{//state utilizado para armazenar os dados do usuário logado
     idCliente: 1,
@@ -78,6 +80,7 @@ export default function CarRentalSystem() {
       })
         .then(() => {
           fetchUserRents()
+          fetchCars()
           alert("Aluguel registrado com sucesso, aguardando aprovação")
         })
     } catch (e) {
@@ -90,7 +93,6 @@ export default function CarRentalSystem() {
 
   //função para cancelar um aluguel 
   const handleCancel = (id: number) => {
-
     try {
       Axios.delete(`http://localhost:3002/alugueis/${id}`)
       fetchUserRents()
@@ -177,10 +179,21 @@ export default function CarRentalSystem() {
   async function fetchCars() {
     try {
       const response = await Axios.get("http://localhost:3002/veiculos");
-      setCarRows(setCarList(response.data));
+      setCarTableData(setCarTableRows(response.data))
     } catch (e) {
       console.log(e);
     }
+  }
+
+
+  async function fetchAvaliableCars() {
+    try{
+      const response = await Axios.get("http://localhost:3002/veiculos/status/true");
+      setCarRows(setCarList(response.data));
+    }catch(e){
+      console.log(e)
+    }
+    
   }
 
   //função para buscar os contratos de alugueis do bd
@@ -225,10 +238,27 @@ export default function CarRentalSystem() {
     return carRows;
   }
 
+  function setCarTableRows(array: any[]) {
+    const carRows = array.map((elements) => (
+      <TableRow key={elements.idveiculo}>
+        <TableCell className="w-[10%]">{elements.modelo}</TableCell>
+        <TableCell className="w-[20%]">{elements.placa}</TableCell>
+        <TableCell className="w-[20%]">{elements.montadora}</TableCell>
+        <TableCell className="w-[20%]">{elements.ano}</TableCell>
+        <TableCell className="w-[30%]">{elements.diaria}</TableCell>
+        <TableCell className="w-[30%]">{elements.disponivel ? "Sim": "Não"}</TableCell>
+      </TableRow>
+    ))
+
+    return carRows;
+
+  }
+
 
 
   useEffect(() => {
     if (user[0].type == "cliente") {
+      fetchAvaliableCars()
       fetchCars();
       fetchUserRents()
     } else fetchPendingRents()
@@ -260,7 +290,7 @@ export default function CarRentalSystem() {
                   <div className="grid w-full items-center gap-4">
                     <div className="flex flex-col space-y-1.5">
                       <Label htmlFor="car">Car Type</Label>
-                      <Select name="car" defaultValue={editingRental || ''} value={editCar} onValueChange={(value)=>{setEditCar(value)}}>
+                      <Select name="car" defaultValue={editingRental || ''} value={editCar} onValueChange={(value) => { setEditCar(value) }}>
                         <SelectTrigger id="car">
                           <SelectValue placeholder="Select car type" />
                         </SelectTrigger>
@@ -337,6 +367,32 @@ export default function CarRentalSystem() {
                       ))}
                     </TableBody>
                   </Table>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Car List</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <ScrollArea className="h-[350px] overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[20%]">Veiculo</TableHead>
+                          <TableHead className="w-[10%]">Placa</TableHead>
+                          <TableHead className="w-[20%]">Montadora</TableHead>
+                          <TableHead className="w-[15%]">Ano</TableHead>
+                          <TableHead className="w-[15%]">Diaria</TableHead>
+                          <TableHead className="w-[20]">Disponivel</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {carTableData}
+                      </TableBody>
+                    </Table>
+                  </ScrollArea>
                 </div>
               </CardContent>
             </Card>

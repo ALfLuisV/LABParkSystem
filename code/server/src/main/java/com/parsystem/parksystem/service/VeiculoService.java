@@ -43,6 +43,30 @@ public class VeiculoService {
         return toDTO(veic);
     }
 
+    public VeiculoDTO atualizarIndisponibilidade(Long id, VeiculoDTO veicDTO) {
+        Veiculo veic = veicRepository.findById(id).orElseThrow(() -> new RuntimeException("Veiculo não encontrado"));
+        veic.setDisponivel(false);
+        return toDTO(veic);
+    }
+
+    public VeiculoDTO atualizarDisponibilidade(Long id, VeiculoDTO veicDTO) {
+        Veiculo veic = veicRepository.findById(id).orElseThrow(() -> new RuntimeException("Veiculo não encontrado"));
+        veic.setDisponivel(true);
+        return toDTO(veic);
+    }
+
+    public List<VeiculoDTO> buscaPorDisponivel(Boolean disponivel) {
+        List<Veiculo> veics = veicRepository.findByDisponivel(disponivel); 
+
+        if (veics.isEmpty()) {
+            throw new RuntimeException("Alugueis não encontrados");
+        }
+
+        return veics.stream()
+                .map(this::toDTO) 
+                .collect(Collectors.toList());
+    }
+
     public void deletarVeiculo(long id) {
         veicRepository.deleteById(id);
     }
