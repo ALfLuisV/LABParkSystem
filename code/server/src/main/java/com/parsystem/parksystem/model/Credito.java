@@ -20,9 +20,6 @@ public class Credito {
     private Double valor;
 
     @Column(nullable = false)
-    private String data;
-
-    @Column(nullable = false)
     private Integer parcelas;
 
     // @ManyToOne
