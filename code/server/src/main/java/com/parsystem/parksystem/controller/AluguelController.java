@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.parsystem.parksystem.dto.AluguelDTO;
+import com.parsystem.parksystem.model.Veiculo;
 import com.parsystem.parksystem.service.AluguelService;
+import com.parsystem.parksystem.service.VeiculoService;
 
 @RestController
 @RequestMapping("/alugueis")
@@ -41,6 +43,11 @@ public class AluguelController {
     @PutMapping("/{id}")
     public ResponseEntity<AluguelDTO> atualizarAluguel(@PathVariable Long id, @RequestBody AluguelDTO AluguelDTO) {
         return ResponseEntity.ok(AluguelService.atualizarAluguel(id, AluguelDTO));
+    }
+
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<AluguelDTO> atualizarInfosAluguel(@PathVariable Long id, @RequestBody AluguelDTO AluguelDTO) {
+        return ResponseEntity.ok(AluguelService.atualizarInfoAluguel(id, AluguelDTO));
     }
 
     @DeleteMapping("/{id}")

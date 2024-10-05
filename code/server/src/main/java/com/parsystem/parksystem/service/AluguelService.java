@@ -35,6 +35,9 @@ public class AluguelService {
     public AluguelDTO criarAluguel(AluguelDTO aluguelDTO) {
 
         Aluguel aluguel = toEntity(aluguelDTO);
+        Veiculo veic = aluguel.getVeiculo();
+        veic.setDisponivel(false);
+        veiculoRepository.save(veic);
         System.out.println("AluguelDTO RECEBIDO NA CRIAR ALUGUEL::::::::::::::::::::::::");
         System.out.println(aluguel);
         aluguelRepository.save(aluguel);
@@ -48,7 +51,8 @@ public class AluguelService {
     }
 
     public List<AluguelDTO> buscaPorClientId(Long idcliente) {
-        List<Aluguel> rents = aluguelRepository.findByClienteIdcliente(idcliente); // Assumindo que esse método retorna List<Aluguel>
+        List<Aluguel> rents = aluguelRepository.findByClienteIdcliente(idcliente); // Assumindo que esse método retorna
+                                                                                   // List<Aluguel>
 
         if (rents.isEmpty()) {
             throw new RuntimeException("Alugueis não encontrados");
@@ -58,7 +62,6 @@ public class AluguelService {
                 .map(this::toDTO) // Convertendo Aluguel para AluguelDTO
                 .collect(Collectors.toList());
     }
-
 
     public List<AluguelDTO> buscaPorStatus(String status) {
         List<Aluguel> rents = aluguelRepository.findByStatus(status); // Assumindo que esse método retorna List<Aluguel>
@@ -76,15 +79,33 @@ public class AluguelService {
         Aluguel aluguel = aluguelRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Aluguel não encontrado"));
         System.out.println(aluguel);
-        aluguel.setValor(aluguelDTO.valor());
-        aluguel.setData(aluguelDTO.data());
+        // aluguel.setValor(aluguelDTO.valor());
+        // aluguel.setData(aluguelDTO.data());
         aluguel.setStatus(aluguelDTO.status());
         System.out.println(aluguel);
         aluguelRepository.save(aluguel);
         return toDTO(aluguel);
     }
 
+    public AluguelDTO atualizarInfoAluguel(Long id, AluguelDTO aluguelDTO) {
+        Aluguel aluguel = aluguelRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Aluguel não encontrado"));
+        System.out.println(aluguel);
+        aluguel.setVeiculo(aluguelDTO.idveiculo());
+        aluguel.setValor(aluguelDTO.valor());
+        aluguel.setData(aluguelDTO.data());
+        // aluguel.setStatus(aluguelDTO.status());
+        System.out.println(aluguel);
+        aluguelRepository.save(aluguel);
+        return toDTO(aluguel);
+    }
+
     public void deletarAluguel(Long id) {
+        Aluguel aluguel = aluguelRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Veiculo não encontrado"));
+        Veiculo veic = aluguel.getVeiculo();
+        veic.setDisponivel(true);
+        veiculoRepository.save(veic);
         aluguelRepository.deleteById(id);
     }
 
