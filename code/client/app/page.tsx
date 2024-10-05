@@ -35,7 +35,7 @@ export default function CarRentalSystem() {
   const [allRentals, setAllRentals] = useState<any[]>([])//armazena todos os alugueis do sistema 
   const [editingRental, setEditingRental] = useState(null);
   const [editData, setEditData] = useState(null);
-  const[creditId, setCreditId] = useState(null)
+  const [creditId, setCreditId] = useState(null)
   const [editCar, setEditCar] = useState("")
   const [editId, setEditId] = useState(-1)
   const [carTableData, setCarTableData] = useState<any[]>([])
@@ -47,7 +47,7 @@ export default function CarRentalSystem() {
     rg: "19369050",
     profissao: "Cafetão",
     idendereco: 1,
-    type: "cliente",
+    type: "agent",
   }])
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -250,6 +250,22 @@ export default function CarRentalSystem() {
   }
 
 
+  async function fetchCreditRents() {
+    try {
+      Axios.get(`http://localhost:3002/alugueis`)
+        .then((response) => {
+          setRentals(response.data);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Ocorreu um erro ao buscar os alugueis:", error);
+        });
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+
   async function fetchPendingRents() {
     try {
       Axios.get("http://localhost:3002/alugueis/status/pendente")
@@ -297,7 +313,10 @@ export default function CarRentalSystem() {
       fetchAvaliableCars()
       fetchCars();
       fetchUserRents()
-    } else fetchPendingRents()
+    } else {
+      fetchPendingRents()
+      fetchCreditRents()
+    }
   }, []);
 
   return (
@@ -375,7 +394,7 @@ export default function CarRentalSystem() {
                             <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
                             <TableCell className="w-[20%]">{rental.data}</TableCell>
                             <TableCell className="w-[20%]">{rental.status}</TableCell>
-                            <TableCell className="w-[20%]">{rental.credito != null? "Sim" : "Não"}</TableCell>
+                            <TableCell className="w-[20%]">{rental.credito != null ? "Sim" : "Não"}</TableCell>
                             <TableCell className="w-[30%]">
                               <div className="flex space-x-2">
                                 <Button variant="outline" size="sm" onClick={() => handleModify(rental)}>
@@ -395,7 +414,7 @@ export default function CarRentalSystem() {
                             <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
                             <TableCell className="w-[20%]">{rental.data}</TableCell>
                             <TableCell className="w-[20%]">{rental.status}</TableCell>
-                            <TableCell className="w-[20%]">{rental.credito != null? "Sim" : "Não"}</TableCell>
+                            <TableCell className="w-[20%]">{rental.credito != null ? "Sim" : "Não"}</TableCell>
                             <TableCell className="w-[30%]">
                               <div className="flex space-x-2">
                                 <Button variant="destructive" size="sm" onClick={() => handleCancel(rental.idaluguel)}>
@@ -440,53 +459,89 @@ export default function CarRentalSystem() {
             </Card>
           </div>
         ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>Evaluate Rental Requests</CardTitle>
-              <CardDescription>Review and update rental request statuses.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Evaluate Rental Requests</CardTitle>
+                <CardDescription>Review and update rental request statuses.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[5%]">ID</TableHead>
+                        <TableHead className="w-[20%]">Cliente</TableHead>
+                        <TableHead className="w-[15%]">Carro</TableHead>
+                        <TableHead className="w-[20%]">Data</TableHead>
+                        <TableHead className="w-[10%]">Valor</TableHead>
+                        <TableHead className="w-[15%]">Status</TableHead>
+                        <TableHead className="w-[15%]">Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {allRentals.map((rental) => (
+                        <TableRow key={rental.idaluguel}>
+                          <TableCell className="w-[10%]">{rental.idaluguel}</TableCell>
+                          <TableCell className="w-[20%]">{rental.idcliente.nome}</TableCell>
+                          <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
+                          <TableCell className="w-[20%]">{rental.data}</TableCell>
+                          <TableCell className="w-[10%]">{rental.valor}</TableCell>
+                          <TableCell className="w-[15%]">{rental.status}</TableCell>
+                          <TableCell className="w-[15%]">
+                            <Select onValueChange={(value) => handleEvaluate(rental, value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Update status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="aprovado">Aprovado</SelectItem>
+                                <SelectItem value="rejeitado">Rejeitado</SelectItem>
+                                <SelectItem value="pendente">Pendente</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Credit Rents</CardTitle>
+                <CardDescription>Review your rental credits.</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[5%]">ID</TableHead>
-                      <TableHead className="w-[20%]">Cliente</TableHead>
-                      <TableHead className="w-[15%]">Carro</TableHead>
-                      <TableHead className="w-[20%]">Data</TableHead>
-                      <TableHead className="w-[10%]">Valor</TableHead>
+                      <TableHead className="w-[5%]">Cliente</TableHead>
+                      <TableHead className="w-[20%]">Veículo</TableHead>
+                      <TableHead className="w-[15%]">Data</TableHead>
+                      <TableHead className="w-[20%]">Valor</TableHead>
+                      <TableHead className="w-[10%]">Parcelas</TableHead>
                       <TableHead className="w-[15%]">Status</TableHead>
-                      <TableHead className="w-[15%]">Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {allRentals.map((rental) => (
-                      <TableRow key={rental.idaluguel}>
-                        <TableCell className="w-[10%]">{rental.idaluguel}</TableCell>
-                        <TableCell className="w-[20%]">{rental.idcliente.nome}</TableCell>
-                        <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
-                        <TableCell className="w-[20%]">{rental.data}</TableCell>
-                        <TableCell className="w-[10%]">{rental.valor}</TableCell>
-                        <TableCell className="w-[15%]">{rental.status}</TableCell>
-                        <TableCell className="w-[15%]">
-                          <Select onValueChange={(value) => handleEvaluate(rental, value)}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Update status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="aprovado">Aprovado</SelectItem>
-                              <SelectItem value="rejeitado">Rejeitado</SelectItem>
-                              <SelectItem value="pendente">Pendente</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {rentals.map((rental) => (
+                      rental.credito != null ? (
+                        <TableRow key={rental.idaluguel}>
+                          <TableCell className="w-[20%]">{rental.idcliente.nome}</TableCell>
+                          <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
+                          <TableCell className="w-[20%]">{rental.data}</TableCell>
+                          <TableCell className="w-[20%]">{rental.credito.valor}</TableCell>
+                          <TableCell className="w-[20%]">{rental.credito.parcelas}</TableCell>
+                          <TableCell className="w-[20%]">{rental.status}</TableCell>
+                        </TableRow>
+                      ):null
+                  ))}
                   </TableBody>
                 </Table>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         )}
       </main>
     </div>
