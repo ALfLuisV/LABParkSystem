@@ -24,7 +24,17 @@ public class CreditoController {
 
     @PostMapping
     public ResponseEntity<CreditoDTO> criarCredito(@RequestBody CreditoDTO creditoDTO) {
-        return ResponseEntity.ok(creditoService.criarCredito(creditoDTO));
+        // Log para verificar a chamada do método
+        System.out.println("Controlador chamado com DTO: " + creditoDTO);
+
+        // Chama o serviço para criar o crédito
+        CreditoDTO retornoCreditoDTO = creditoService.criarCredito(creditoDTO);
+
+        // Verificar se o serviço retornou algo
+        System.out.println("DTO recebido do serviço: " + retornoCreditoDTO);
+
+        // Retornar a resposta
+        return ResponseEntity.ok(retornoCreditoDTO);
     }
 
     @GetMapping("/{id}")

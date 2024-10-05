@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import com.parsystem.parksystem.dto.AluguelDTO;
 import com.parsystem.parksystem.model.Aluguel;
 import com.parsystem.parksystem.model.Cliente;
+import com.parsystem.parksystem.model.Credito;
 import com.parsystem.parksystem.model.Veiculo;
 import com.parsystem.parksystem.repository.AluguelRepository;
 import com.parsystem.parksystem.repository.ClienteRepository;
+import com.parsystem.parksystem.repository.CreditoRepository;
 import com.parsystem.parksystem.repository.VeiculoRepository;
 
 @Service
@@ -25,6 +27,9 @@ public class AluguelService {
 
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private CreditoRepository creditoRepository;
 
     public List<AluguelDTO> listarTodos() {
         return aluguelRepository.findAll().stream()
@@ -104,7 +109,13 @@ public class AluguelService {
         Aluguel aluguel = aluguelRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Veiculo não encontrado"));
         Veiculo veic = aluguel.getVeiculo();
+
         veic.setDisponivel(true);
+        if (aluguel.getCredito() != null) {
+            Credito credito = aluguel.getCredito();
+            aluguelRepository.deleteById(id);
+            creditoRepository.deleteById(credito.getIdcredito());
+        }
         veiculoRepository.save(veic);
         aluguelRepository.deleteById(id);
     }
@@ -116,7 +127,8 @@ public class AluguelService {
                 aluguel.getCliente(), // Alterado para obter o ID do Cliente
                 aluguel.getValor(),
                 aluguel.getData(),
-                aluguel.getStatus());
+                aluguel.getStatus(),
+                aluguel.getCredito());
     }
 
     private Aluguel toEntity(AluguelDTO aluguelDTO) {
@@ -128,6 +140,11 @@ public class AluguelService {
                 .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
         Cliente cliente = clienteRepository.findById(aluguelDTO.idcliente().getIdcliente())
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        if (aluguelDTO.credito() != null) {
+            Credito credito = creditoRepository.findById(aluguelDTO.credito().getIdcredito())
+                    .orElseThrow(() -> new RuntimeException("Aluguel não encontrado"));
+                    aluguel.setCredito(credito);// Agora define a entidade Credito
+        }
         aluguel.setVeiculo(veiculo); // Agora define a entidade Veiculo
         aluguel.setCliente(cliente); // Agora define a entidade Cliente
         aluguel.setValor(aluguelDTO.valor());

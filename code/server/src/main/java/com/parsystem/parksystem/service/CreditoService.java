@@ -25,7 +25,9 @@ public class CreditoService {
     public CreditoDTO criarCredito(CreditoDTO creditoDTO) {
         Credito credito = toEntity(creditoDTO);
         creditoRepository.save(credito);
-        return toDTO(credito);
+        var credito1 = toDTO(credito);
+        System.out.println(credito1);
+        return credito1;
     }
 
     public CreditoDTO buscarPorId(Long id) {
@@ -47,7 +49,7 @@ public class CreditoService {
     }
 
     private CreditoDTO toDTO(Credito credito) {
-        return new CreditoDTO(credito.getIdcredito(), credito.getValor(), credito.getParcelas());
+        return new CreditoDTO(credito.getIdcredito(), credito.getValor(), credito.getParcelas(), credito.getIdbanco());
     }
 
     private Credito toEntity(CreditoDTO creditoDTO) {

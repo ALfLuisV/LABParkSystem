@@ -1,5 +1,6 @@
 package com.parsystem.parksystem.model;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +32,11 @@ public class Aluguel {
     @ManyToOne
     @JoinColumn(name = "idcliente")
     private Cliente cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "idcredito")
+    @Nullable
+    private Credito credito;
 
     public Aluguel(int id) {
         this.idaluguel = (long) id;

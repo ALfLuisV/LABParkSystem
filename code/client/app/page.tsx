@@ -28,12 +28,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Home, User, Building2, Pencil, X } from "lucide-react";
+import { useRef } from 'react';
 
 export default function CarRentalSystem() {
   const [rentals, setRentals] = useState<any[]>([]);//armazena os alugueis do usuario que está logado
   const [allRentals, setAllRentals] = useState<any[]>([])//armazena todos os alugueis do sistema 
   const [editingRental, setEditingRental] = useState(null);
   const [editData, setEditData] = useState(null);
+  const[creditId, setCreditId] = useState(null)
   const [editCar, setEditCar] = useState("")
   const [editId, setEditId] = useState(-1)
   const [carTableData, setCarTableData] = useState<any[]>([])
@@ -47,6 +49,8 @@ export default function CarRentalSystem() {
     idendereco: 1,
     type: "cliente",
   }])
+
+  const formRef = useRef<HTMLFormElement>(null);
 
 
 
@@ -63,13 +67,45 @@ export default function CarRentalSystem() {
     console.log(typeof diary);
     console.log(typeof datas);
 
-    const requestData = { rentalCarID: carID, rentalDate: datas.toString(), diaryValue: diary }
+    const requestData = { rentalCarID: carID, rentalDate: datas.toString(), diaryValue: diary, credit: creditId }
     rentalPost(requestData)
   };
 
 
+  //função que cria um credito para o aluguel do veiculo
+  const createCredit = async () => {
+    const [carID, diary] = (editCar as string).split("/");
+    const diaria = parseFloat(diary) * 1.35;
+    console.log(typeof carID);
+    console.log(typeof diary);
+
+    let parcelas1 = prompt(`O crédito requisitado terá um custo total de ${diaria}, insira a quantidade de parcelas desejadas, para recusar, tecle ESC`);
+    if (parcelas1) {
+      try {
+        // Faz a requisição POST e espera pela resposta
+        const response = await Axios.post("http://localhost:3002/creditos", {
+          valor: diaria,      // Valor da diária sendo enviado
+          parcelas: parcelas1, // Parcelas sendo enviadas
+          idbanco: 1,         // ID do banco sendo enviado
+        });
+
+        const creditoDTO = response.data;
+
+        setCreditId(creditoDTO.idCredito);
+
+        fetchUserRents();
+        fetchCars();
+        alert("Crédito registrado com sucesso, por favor, continue com o processo de aluguel do veículo");
+
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
   //função para inserir um aluguel novo no banco de dados
-  async function rentalPost(rentalObject: { diaryValue: string, rentalCarID: string, rentalDate: string }) {
+  async function rentalPost(rentalObject: { diaryValue: string, rentalCarID: string, rentalDate: string, credit: any }) {
+    console.log(rentalObject)
     try {
       Axios.post("http://localhost:3002/alugueis", {
         idveiculo: parseInt(rentalObject.rentalCarID),//no dto de aluguel, este campo é do formato LONG
@@ -77,6 +113,7 @@ export default function CarRentalSystem() {
         valor: parseFloat(rentalObject.diaryValue),
         data: rentalObject.rentalDate,
         status: "pendente",
+        credito: rentalObject.credit,
       })
         .then(() => {
           fetchUserRents()
@@ -97,7 +134,7 @@ export default function CarRentalSystem() {
       Axios.delete(`http://localhost:3002/alugueis/${id}`)
       fetchUserRents()
       alert("Contrato de aluguel excluido com sucesso!!!")
-      window.location.reload();
+      // window.location.reload();
     } catch (e) {
       console.log(e)
     }
@@ -187,13 +224,13 @@ export default function CarRentalSystem() {
 
 
   async function fetchAvaliableCars() {
-    try{
+    try {
       const response = await Axios.get("http://localhost:3002/veiculos/status/true");
       setCarRows(setCarList(response.data));
-    }catch(e){
+    } catch (e) {
       console.log(e)
     }
-    
+
   }
 
   //função para buscar os contratos de alugueis do bd
@@ -246,14 +283,13 @@ export default function CarRentalSystem() {
         <TableCell className="w-[20%]">{elements.montadora}</TableCell>
         <TableCell className="w-[20%]">{elements.ano}</TableCell>
         <TableCell className="w-[30%]">{elements.diaria}</TableCell>
-        <TableCell className="w-[30%]">{elements.disponivel ? "Disponivel": "Locado"}</TableCell>
+        <TableCell className="w-[30%]">{elements.disponivel ? "Disponivel" : "Locado"}</TableCell>
       </TableRow>
     ))
 
     return carRows;
 
   }
-
 
 
   useEffect(() => {
@@ -306,7 +342,10 @@ export default function CarRentalSystem() {
                   </div>
                   <div className="flex justify-between mt-4">
                     <Button type="button" variant="outline" onClick={() => setEditingRental(null)}>Cancel</Button>
-                    <Button type="submit">{editingRental ? "Update Request" : "Submit Request"}</Button>
+                    <div>
+                      <Button type="button" variant="destructive" style={{ marginRight: "15px" }} onClick={(e) => { createCredit() }}>Get credit</Button>
+                      <Button type="submit">{editingRental ? "Update Request" : "Submit Request"}</Button>
+                    </div>
                   </div>
                 </form>
               </CardContent>
@@ -323,7 +362,8 @@ export default function CarRentalSystem() {
                         <TableHead className="w-[15%]">ID</TableHead>
                         <TableHead className="w-[25%]">Carro</TableHead>
                         <TableHead className="w-[25%]">Data</TableHead>
-                        <TableHead className="w-[25%]">Status</TableHead>
+                        <TableHead className="w-[15%]">Status</TableHead>
+                        <TableHead className="w-[25%]">Possui credito?</TableHead>
                         <TableHead className="w-[35%]">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -335,6 +375,7 @@ export default function CarRentalSystem() {
                             <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
                             <TableCell className="w-[20%]">{rental.data}</TableCell>
                             <TableCell className="w-[20%]">{rental.status}</TableCell>
+                            <TableCell className="w-[20%]">{rental.credito != null? "Sim" : "Não"}</TableCell>
                             <TableCell className="w-[30%]">
                               <div className="flex space-x-2">
                                 <Button variant="outline" size="sm" onClick={() => handleModify(rental)}>
@@ -343,7 +384,7 @@ export default function CarRentalSystem() {
                                 </Button>
                                 <Button variant="destructive" size="sm" onClick={() => handleCancel(rental.idaluguel)}>
                                   <X className="h-4 w-4 mr-1" />
-                                  Cancel
+                                  Delete
                                 </Button>
                               </div>
                             </TableCell>
@@ -354,6 +395,7 @@ export default function CarRentalSystem() {
                             <TableCell className="w-[20%]">{rental.idveiculo.modelo}</TableCell>
                             <TableCell className="w-[20%]">{rental.data}</TableCell>
                             <TableCell className="w-[20%]">{rental.status}</TableCell>
+                            <TableCell className="w-[20%]">{rental.credito != null? "Sim" : "Não"}</TableCell>
                             <TableCell className="w-[30%]">
                               <div className="flex space-x-2">
                                 <Button variant="destructive" size="sm" onClick={() => handleCancel(rental.idaluguel)}>
