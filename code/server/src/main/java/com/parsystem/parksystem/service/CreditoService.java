@@ -38,7 +38,6 @@ public class CreditoService {
         Credito credito = creditoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Crédito não encontrado"));
         credito.setValor(creditoDTO.valor());
-        credito.setData(creditoDTO.data());
         credito.setParcelas(creditoDTO.parcelas());
         return toDTO(credito);
     }
@@ -48,13 +47,12 @@ public class CreditoService {
     }
 
     private CreditoDTO toDTO(Credito credito) {
-        return new CreditoDTO(credito.getIdcredito(), credito.getValor(), credito.getData(), credito.getParcelas());
+        return new CreditoDTO(credito.getIdcredito(), credito.getValor(), credito.getParcelas());
     }
 
     private Credito toEntity(CreditoDTO creditoDTO) {
         Credito credito = new Credito();
         credito.setValor(creditoDTO.valor());
-        credito.setData(creditoDTO.data());
         credito.setParcelas(creditoDTO.parcelas());
         return credito;
     }
